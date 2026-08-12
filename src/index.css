@@ -1,0 +1,40 @@
+/* 
+  This file replaces the old App.css.
+  Instead of writing our own CSS, we import Tailwind's three layers.
+  
+  @tailwind base      → Tailwind's CSS reset (normalizes browser differences)
+  @tailwind components → Where @apply-based component classes would go
+  @tailwind utilities  → All the utility classes: flex, p-4, text-xl, etc.
+  
+  Every utility class you use in your JSX (like "bg-white" or "rounded-lg")
+  comes from the utilities layer. Tailwind scans your JSX files and only
+  includes the classes you actually use — keeping the final CSS file small.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-500: #1b9810;
+    --brand-600: #15800d;
+  }
+  
+  * {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* We only write custom CSS when Tailwind can't do it */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
