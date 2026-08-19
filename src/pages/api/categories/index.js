@@ -1,21 +1,49 @@
-import { getAllCategories, createCategory } from "../../../lib/db/categories";
+import { getAllCategories, createCategory, updateCategory, deleteCategory } from "../../../lib/db/categories";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../../lib/auth-options";
 
 export default async function handler(req, res) {
   try {
-    switch (req.method) {
-      case "GET":
-        // Get all categories sorted by display order
-        const categories = await getAllCategories();
-        return res.status(200).json({ categories });
+    // GET requests don't require authentication (public access for navbar)
+    if (req.method === "GET") {
+      const categories = await getAllCategories();
+      return res.status(200).json({ categories });
+    }
 
+    // Write operations require admin authentication
+    const session = await getServerSession(req, res, authOptions);
+    
+    if (!session?.user?.isAdmin) {
+      return res.status(403).json({ error: "Admin access required" });
+    }
+
+    const { id } = req.query;
+
+    switch (req.method) {
       case "POST":
         // Create new category (admin only)
         const categoryData = req.body;
         const newCategory = await createCategory(categoryData);
         return res.status(201).json(newCategory);
 
+      case "PUT":
+        // Update category (admin only)
+        if (!id) {
+          return res.status(400).json({ error: "Category ID required" });
+        }
+        const updatedCategory = await updateCategory(id, req.body);
+        return res.status(200).json(updatedCategory);
+
+      case "DELETE":
+        // Delete category (admin only)
+        if (!id) {
+          return res.status(400).json({ error: "Category ID required" });
+        }
+        await deleteCategory(id);
+        return res.status(200).json({ success: true });
+
       default:
-        res.setHeader("Allow", ["GET", "POST"]);
+        res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
         return res.status(405).end("Method Not Allowed");
     }
   } catch (error) {

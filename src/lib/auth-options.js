@@ -1,9 +1,11 @@
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "./mongodb";
 import { isAdminEmail } from "./admin";
 import { assertAuthConfig, getAuthUrl } from "./auth";
-import { getUserIdByEmail } from "./db/users";
+import { getUserIdByEmail, verifyUserCredentials, createUserByEmail } from "./db/users";
+import bcrypt from "bcryptjs";
 
 function buildAuthOptions() {
   const authUrl = getAuthUrl();
@@ -23,6 +25,34 @@ function buildAuthOptions() {
             access_type: "offline",
             response_type: "code",
           },
+        },
+      }),
+      CredentialsProvider({
+        name: "Email",
+        credentials: {
+          email: { label: "Email", type: "email" },
+          password: { label: "Password", type: "password" },
+        },
+        async authorize(credentials) {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email and password are required");
+          }
+
+          try {
+            const user = await verifyUserCredentials(credentials.email, credentials.password);
+            if (user) {
+              return {
+                id: user._id?.toString() || user.id,
+                email: user.email,
+                name: user.name,
+                image: user.image,
+              };
+            }
+            throw new Error("Invalid email or password");
+          } catch (error) {
+            console.error("[CredentialsProvider] Auth error:", error.message);
+            throw new Error("Invalid email or password");
+          }
         },
       }),
     ],

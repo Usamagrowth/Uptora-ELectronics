@@ -392,7 +392,7 @@ function ProductsPage() {
           </div>
         </div>
       ) : routeSection && sectionBanners[routeSection] ? (
-        <div className="relative h-[250px] md:h-[350px] sm:h-[350px] lg:h-[400px]  overflow-hidden">
+        <div className="relative h-full overflow-hidden">
           <img 
             src={sectionBanners[routeSection].image} 
             alt="product-image"
@@ -402,7 +402,7 @@ function ProductsPage() {
       ) : (
         <>
           {/* Category Hero Image */}
-          <div className="relative h-[250px] md:h-[350px] sm:h-[350px] lg:h-[400px] overflow-hidden">
+          <div className="relative h-full overflow-hidden">
             <img 
               src={categoryCopy[selectedCategory]?.image || "/hero-banner.png"} 
               alt="product-image" 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import {
   Package,
   ShoppingBag,
@@ -8,7 +8,10 @@ import {
   Clock,
   ChevronRight,
   Loader2,
+  Lock,
+  Save,
 } from "lucide-react";
+import AuthModal from "../components/auth/AuthModal";
 
 function formatNaira(amount) {
   return `₦${amount.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -34,6 +37,7 @@ function DashboardPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     if (status === "loading" || !session) return;
@@ -63,6 +67,11 @@ function DashboardPage() {
     return { totalSpent, delivered, pending, count: orders.length };
   }, [orders]);
 
+  const tabs = [
+    { key: "orders", label: "Order History", icon: Package },
+    { key: "profile", label: "My Profile", icon: User },
+  ];
+
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
@@ -82,19 +91,14 @@ function DashboardPage() {
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Track orders, manage your profile, and more.</p>
         </div>
         <button
-          onClick={() => signIn("google", { callbackUrl: "/dashboard", prompt: "select_account" })}
+          onClick={() => setAuthModalOpen(true)}
           className="rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-600 transition shadow-lg shadow-brand-200 dark:shadow-brand-900/30"
         >
-          Sign in with Google
+          Sign in
         </button>
       </div>
     );
   }
-
-  const tabs = [
-    { key: "orders", label: "Order History", icon: Package },
-    { key: "profile", label: "My Profile", icon: User },
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
@@ -263,6 +267,9 @@ function DashboardPage() {
             )}
           </section>
         </div>
+
+        {/* Auth Modal */}
+        <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
       </main>
     </div>
   );

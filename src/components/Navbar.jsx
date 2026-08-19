@@ -3,9 +3,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
 import { useProductsContext } from "../context/ProductsContext";
-import { signIn, signOut } from "next-auth/react";
-import { Menu, ShoppingCart, X, Search, ChevronDown } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { Menu, ShoppingCart, X, Search, User } from "lucide-react";
 import SearchBar from "./SearchBar";
+import AuthModal from "./auth/AuthModal";
 
 function Navbar({ cartCount, onCartOpen }) {
   const router = useRouter();
@@ -14,9 +15,9 @@ function Navbar({ cartCount, onCartOpen }) {
   const { searchQuery, setSearchQuery } = useProductsContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [categories, setCategories] = useState([]);
 
-  // Fetch categories from MongoDB
   useEffect(() => {
     async function fetchCategories() {
       try {
@@ -106,10 +107,20 @@ function Navbar({ cartCount, onCartOpen }) {
                 </button>
               ) : (
                 <button
-                  onClick={() => signIn("google", { callbackUrl: "/dashboard", prompt: "select_account" })}
+                  onClick={() => setAuthModalOpen(true)}
                   className="hidden rounded-md border border-brand-500 px-3 py-2 text-xs font-black text-brand-600 transition hover:bg-brand-50 md:inline-flex"
                 >
-                  Sign in
+                  Login
+                </button>
+              )}
+
+              {!user && (
+                <button
+                  onClick={() => setAuthModalOpen(true)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-gray-600 transition hover:bg-gray-100 md:hidden"
+                  aria-label="Login"
+                >
+                  <User className="h-5 w-5" />
                 </button>
               )}
 
@@ -123,10 +134,9 @@ function Navbar({ cartCount, onCartOpen }) {
             </div>
           </div>
 
-          {/* Expanded Search Panel */}
           {searchOpen && (
             <div className="border-t border-gray-200 bg-white px-4 py-4 sm:px-6 lg:px-8">
-              <div  className="mx-auto max-w-7xl">
+              <div className="mx-auto max-w-7xl">
                 <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} onClose={() => setSearchOpen(false)} />
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="text-xs font-semibold text-gray-500">Quick filters:</span>
@@ -141,17 +151,13 @@ function Navbar({ cartCount, onCartOpen }) {
               </div>
             </div>
           )}
-
-
-        
         </div>
       </nav>
 
-      {/* Mobile Menu - Outside navbar for proper z-index */}
       <div className={`fixed inset-0 z-[9999] bg-white transition-all duration-300 md:hidden ${menuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-1">
-            <Link href="/" className="w-32 h-32" onClick={() => { setMenuOpen(false); setSearchOpen(false); }}>
+            <Link href="/" className="w-32 h-32" onClick={() => {setMenuOpen(false); setSearchOpen(false);}}>
               <img src="/logo.png" alt="Uptora Electronics" className="w-full h-full" />
             </Link>
             <button
@@ -163,7 +169,7 @@ function Navbar({ cartCount, onCartOpen }) {
             </button>
           </div>
           <div className="flex flex-col gap-4 overflow-y-auto flex-1 px-6">
-            <Link href="/" className={linkCls("/")} onClick={() => { setMenuOpen(false); setSearchOpen(false); }}>Shop</Link>
+            <Link href="/" className={linkCls("/")} onClick={() => {setMenuOpen(false); setSearchOpen(false);}}>Shop</Link>
             {categories.map((category) => (
               <Link
                 key={category.id}
@@ -180,25 +186,42 @@ function Navbar({ cartCount, onCartOpen }) {
           </div>
           <div className="pt-4 border-t border-gray-100 px-6">
             {user ? (
-              <button
-                type="button"
-                onClick={() => { setMenuOpen(false); signOut({ callbackUrl: "/" }); }}
-                className="w-full text-left text-sm font-bold text-gray-700 py-2"
-              >
-                Sign out
-              </button>
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="h-10 w-10 rounded-full" />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold">
+                      {user.name?.[0] || "U"}
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-gray-900">{user.name}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => { setMenuOpen(false); signOut({ callbackUrl: "/" }); }}
+                  className="w-full flex items-center gap-2 text-left text-sm font-bold text-gray-700 py-2 hover:bg-gray-50 rounded px-2"
+                >
+                  <User className="w-4 h-4" />
+                  Sign out
+                </button>
+              </>
             ) : (
               <button
-                type="button"
-                onClick={() => { setMenuOpen(false); signIn("google", { callbackUrl: "/", prompt: "select_account" }); }}
-                className="w-full text-left text-sm font-black text-brand-600 py-2"
+                onClick={() => {setMenuOpen(false); setAuthModalOpen(true);}}
+                className="w-full flex items-center gap-2 text-left text-sm font-black text-brand-600 py-2 hover:bg-gray-50 rounded px-2"
               >
-                Sign in
+                <User className="w-4 h-4" />
+                Login
               </button>
             )}
           </div>
         </div>
       </div>
+
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   );
 }

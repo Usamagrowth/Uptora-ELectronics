@@ -260,6 +260,53 @@ export async function searchProducts(query, limit = 20) {
 }
 
 /**
+ * Get products by filters
+ */
+export async function getProductsByFilters(filters = {}, limit = 20, sort = "relevance") {
+  const db = await getDb();
+  
+  const { category, minPrice, maxPrice, brand } = filters;
+  
+  // Build query
+  const query = {};
+  
+  if (category) query.category = category;
+  if (brand) query.brand = brand;
+  
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    query.price = {};
+    if (minPrice !== undefined) query.price.$gte = Number(minPrice);
+    if (maxPrice !== undefined) query.price.$lte = Number(maxPrice);
+  }
+  
+  // Build sort
+  let sortOption = {};
+  switch (sort) {
+    case "price-asc":
+      sortOption = { price: 1 };
+      break;
+    case "price-desc":
+      sortOption = { price: -1 };
+      break;
+    case "newest":
+      sortOption = { createdAt: -1 };
+      break;
+    case "relevance":
+    default:
+      sortOption = { createdAt: -1 };
+  }
+  
+  const docs = await db
+    .collection(COLLECTION)
+    .find(query)
+    .sort(sortOption)
+    .limit(limit)
+    .toArray();
+  
+  return docs.map(formatProduct);
+}
+
+/**
  * Get related products (same category, excluding current product)
  */
 export async function getRelatedProducts(productId, category, limit = 4) {

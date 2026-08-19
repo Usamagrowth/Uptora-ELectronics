@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import "../index.css";
@@ -9,12 +9,25 @@ import Navbar from "../components/Navbar";
 import CartSidebar from "../components/CartSidebar";
 import Footer from "../components/Footer";
 import WhatsAppChat from "../components/WhatsAppChat";
+import AIAssistant from "../components/ai/AIAssistant";
 
 function AppShell({ Component, pageProps }) {
   const { cart, cartCount, removeFromCart, cartTotal } = useProductsContext();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
+
+  // Register service worker for PWA
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+  }, []);
 
   // Hide footer on dashboard, checkout, and auth pages
   const hideFooter = router.pathname === '/dashboard' || 
@@ -27,8 +40,6 @@ function AppShell({ Component, pageProps }) {
       <Navbar
         cartCount={cartCount}
         onCartOpen={() => setIsCartOpen(true)}
-        onSearchToggle={() => setIsSearchOpen((open) => !open)}
-        isSearchOpen={isSearchOpen}
       />
       <CartSidebar
         cart={cart}
@@ -38,9 +49,10 @@ function AppShell({ Component, pageProps }) {
         onClose={() => setIsCartOpen(false)}
       />
       <main className="flex-1">
-        <Component {...pageProps} isSearchOpen={isSearchOpen} />
+        <Component {...pageProps} />
       </main>
       <WhatsAppChat />
+      <AIAssistant />
       {!hideFooter && <Footer />}
     </div>
   );

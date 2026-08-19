@@ -1,4 +1,4 @@
-import { searchProducts } from "../../../lib/db/products";
+import { searchProducts, getProductsByFilters } from "../../../lib/db/products";
 
 export default async function handler(req, res) {
   try {
@@ -7,14 +7,27 @@ export default async function handler(req, res) {
       return res.status(405).end("Method Not Allowed");
     }
 
-    const { q, limit = 20 } = req.query;
+    const { q, category, minPrice, maxPrice, brand, limit = 20, sort = "relevance" } = req.query;
     
-    if (!q) {
-      return res.status(400).json({ error: "Search query is required" });
+    // Search query
+    if (q) {
+      const products = await searchProducts(q, parseInt(limit));
+      return res.status(200).json({ products, query: q, type: "search" });
     }
-
-    const products = await searchProducts(q, parseInt(limit));
-    return res.status(200).json({ products });
+    
+    // Filter query
+    if (category || minPrice || maxPrice || brand) {
+      const filters = {};
+      if (category) filters.category = category;
+      if (minPrice) filters.minPrice = parseFloat(minPrice);
+      if (maxPrice) filters.maxPrice = parseFloat(maxPrice);
+      if (brand) filters.brand = brand;
+      
+      const products = await getProductsByFilters(filters, parseInt(limit), sort);
+      return res.status(200).json({ products, filters, type: "filter" });
+    }
+    
+    return res.status(400).json({ error: "Search query or filters are required" });
   } catch (error) {
     console.error("API Error in /api/products/search:", error);
     console.error("Full error object:", JSON.stringify(error, null, 2));

@@ -48,12 +48,11 @@ function CartSidebar({ cart, onRemove, cartTotal, isOpen, onClose }) {
             </span>
             <p className="font-black text-gray-700 dark:text-gray-300">Your cart is empty</p>
             <p className="text-sm text-gray-400 dark:text-gray-500">Browse products and add something you love.</p>
-            <button
-              onClick={onClose}
+            <Link href="/" onClick={onClose} 
               className="mt-3 rounded-md bg-brand-500 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-600"
             >
               Browse Products
-            </button>
+            </Link>
           </div>
         ) : (
           <>
