@@ -84,7 +84,7 @@ export default function AIAssistant() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-20 z-50 w-full max-w-md max-h-[600px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 flex flex-col">
+        <div className="fixed bottom-6 right-0 z-50 w-full max-w-md max-h-[600px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-brand-500 to-brand-600 text-white rounded-t-2xl">
             <div className="flex items-center gap-3">
