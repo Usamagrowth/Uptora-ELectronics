@@ -23,8 +23,8 @@ export default function ProductList({ products, onEdit, onDelete, onAdd }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Product Catalog</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-lg font-bold text-black">Product Catalog</h2>
+          <p className="text-sm text-gray-950">
             {products.length} products • {filteredProducts.length} shown
           </p>
         </div>
@@ -40,7 +40,7 @@ export default function ProductList({ products, onEdit, onDelete, onAdd }) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 p-4 bg-white border border-gray-200 rounded-lg">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-950" />
           <input
             type="text"
             placeholder="Search products..."
@@ -52,7 +52,7 @@ export default function ProductList({ products, onEdit, onDelete, onAdd }) {
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          className="px-4 py-2 border border-gray-300 text-gray-950 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
         >
           {categories.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
@@ -61,7 +61,7 @@ export default function ProductList({ products, onEdit, onDelete, onAdd }) {
         <select
           value={filterStock}
           onChange={(e) => setFilterStock(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          className="px-4 py-2 border border-gray-300 text-gray-950 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
         >
           <option value="All">All Stock</option>
           <option value="In Stock">In Stock</option>

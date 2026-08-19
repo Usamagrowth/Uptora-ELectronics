@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import {
   Package,
   ShoppingCart,
-  DollarSign,
   Clock,
   Loader2,
   Shield,
@@ -18,6 +17,7 @@ import ProductForm from "../components/admin/ProductForm";
 import ProductList from "../components/admin/ProductList";
 import CategoryForm from "../components/admin/CategoryForm";
 import AuthModal from "../components/auth/AuthModal";
+import { FaNairaSign } from "react-icons/fa6";
 
 function formatNaira(amount) {
   return `₦${amount.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -323,7 +323,7 @@ function AdminPage() {
   }
 
   const tabs = [
-    { key: "overview", label: "Overview", icon: DollarSign },
+    { key: "overview", label: "Overview", icon: FaNairaSign },
     { key: "orders", label: "Orders", icon: ShoppingCart },
     { key: "products", label: "Products", icon: Box },
     { key: "categories", label: "Categories", icon: Package },
@@ -351,7 +351,7 @@ function AdminPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: "Total Revenue", value: formatNaira(stats.revenue), icon: DollarSign, color: "text-brand-600 bg-brand-50 dark:bg-brand-900/30" },
+            { label: "Total Revenue", value: formatNaira(stats.revenue), icon: FaNairaSign, color: "text-brand-600 bg-brand-50 dark:bg-brand-900/30" },
             { label: "Total Orders", value: stats.total, icon: ShoppingCart, color: "text-blue-600 bg-blue-50 dark:bg-blue-900/30" },
             { label: "Pending", value: stats.pending, icon: Clock, color: "text-amber-600 bg-amber-50 dark:bg-amber-900/30" },
             { label: "Delivered", value: stats.delivered, icon: Package, color: "text-green-600 bg-green-50 dark:bg-green-900/30" },
@@ -372,7 +372,7 @@ function AdminPage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex gap-2 border-b border-gray-200 dark:border-gray-800">
+        <div className="mb-6  flex overflow-x-auto gap-2 border-b border-gray-200 dark:border-gray-800">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -399,7 +399,7 @@ function AdminPage() {
             <div className="p-6 sm:p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: "Total Revenue", value: formatNaira(stats.revenue), icon: DollarSign, color: "text-brand-600 bg-brand-50 dark:bg-brand-900/30" },
+                  { label: "Total Revenue", value: formatNaira(stats.revenue), icon: FaNairaSign, color: "text-brand-600 bg-brand-50 dark:bg-brand-900/30" },
                   { label: "Total Orders", value: stats.total, icon: ShoppingCart, color: "text-blue-600 bg-blue-50 dark:bg-blue-900/30" },
                   { label: "Pending Orders", value: stats.pending, icon: Clock, color: "text-amber-600 bg-amber-50 dark:bg-amber-900/30" },
                   { label: "Products", value: products.length, icon: Box, color: "text-green-600 bg-green-50 dark:bg-green-900/30" },
