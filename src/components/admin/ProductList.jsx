@@ -21,10 +21,10 @@ export default function ProductList({ products, onEdit, onDelete, onAdd }) {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row bg-white sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-black">Product Catalog</h2>
-          <p className="text-sm text-gray-950">
+          <h2 className="text-lg font-bold text-gray-800">Product Catalog</h2>
+          <p className="text-sm text-gray-800">
             {products.length} products • {filteredProducts.length} shown
           </p>
         </div>
