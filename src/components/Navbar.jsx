@@ -9,7 +9,6 @@ import SearchBar from "./SearchBar";
 import AuthModal from "./auth/AuthModal";
 import { useSession } from "next-auth/react";
 
-
 function Navbar({ cartCount, onCartOpen }) {
   const router = useRouter();
   const pathname = router.pathname;
@@ -78,7 +77,7 @@ useEffect(() => {
         <div className="mx-auto max-w-7xl px-1 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">
             <Link href="/" className="flex" onClick={() => setSearchOpen(false)}>
-              <img src="/logo.png" alt="Uptora Electronics" className="md:h-full md:w-96  w-32 h-32" />
+              <img src="/logo.png" alt="Uptora Electronics" className="md:h-full md:w-full lg:h-full lg:w-full w-32 h-32" />
             </Link>
 
             <div className="hidden items-center px-4 gap-4 lg:gap-6 md:flex overflow-x-auto">
