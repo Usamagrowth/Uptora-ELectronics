@@ -354,7 +354,7 @@ function ProductsPage() {
   return (
     <>
       <Head>
-        <title>Uptora Electronics — Genuine Electronics in Ibadan, Nigeria</title>
+        <title>Uptora Electronics | Genuine Electronics in Ibadan, Nigeria</title>
         <meta name="description" content="Shop TVs, ACs, Solar panels, inverters, phones, laptops and more at Uptora Electronics. Fast delivery in Ibadan and across Nigeria. Secure payments via Paystack." />
         <meta name="keywords" content="electronics Ibadan, buy TV Nigeria, solar panels Ibadan, inverter battery Nigeria, phones laptops Nigeria, Uptora Electronics" />
         <meta property="og:title" content="Uptora Electronics — Genuine Electronics in Ibadan" />
@@ -369,7 +369,7 @@ function ProductsPage() {
       {/* Hero Section */}
       {selectedCategory === "All" && !searchQuery && !router.query.section ? (
         <div 
-          className="relative h-[220px] sm:h-[320px] md:h-[420px] lg:h-[500px] overflow-hidden group"
+          className="relative h-[180px] sm:h-[320px] md:h-[420px] lg:h-[500px] overflow-hidden group"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
