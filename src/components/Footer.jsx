@@ -35,8 +35,16 @@ const Footer = () => {
             <ul className="space-y-3">
               <li><Link href="/" className={linkClass}>All products</Link></li>
               <li><Link href="/?category=Inverter%20%26%20Battery" className={linkClass}>Inverter & Battery</Link></li>
+              <li><Link href="/?category=Solar%20Panels" className={linkClass}>Solar Panels</Link></li>
+              <li><Link href="/?category=TVs" className={linkClass}>TVs</Link></li>
+              <li><Link href="/?category=ACs" className={linkClass}>ACs</Link></li>
+              <li><Link href="/?category=Refrigerators" className={linkClass}>Refrigerators</Link></li>
+              <li><Link href="/?category=Generators" className={linkClass}>Generators</Link></li>
               <li><Link href="/?category=Phones%20%26%20Tablets" className={linkClass}>Phones & Tablets</Link></li>
-              <li><Link href="/?category=Appliances" className={linkClass}>Appliances</Link></li>
+              <li><Link href="/?category=Computing" className={linkClass}>Computing</Link></li>
+              <li><Link href="/?category=Audio%20%26%20Accessories" className={linkClass}>Audio & Accessories</Link></li>
+              <li><Link href="/?category=Kitchen%20Appliances" className={linkClass}>Kitchen Appliances</Link></li>
+              <li><Link href="/?category=Gaming" className={linkClass}>Gaming</Link></li>
               <li><Link href="/checkout" className={linkClass}>Checkout</Link></li>
             </ul>
           </div>

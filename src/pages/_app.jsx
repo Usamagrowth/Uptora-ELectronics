@@ -64,6 +64,9 @@ export default function MyApp({ Component, pageProps }) {
       <Head>
         <title>Uptora Electronics</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#ea580c" />
+        <meta name="application-name" content="Uptora Electronics" />
+        <meta name="author" content="Uptora Electronics" />
       </Head>
       <SessionProvider session={pageProps.session}>
         <AuthProvider>

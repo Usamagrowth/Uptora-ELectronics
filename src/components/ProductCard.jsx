@@ -11,6 +11,11 @@ function ProductCard({ product, onAddToCart }) {
   });
   const oldPrice = Math.round(product.price * 1.12);
   const isPremium = product.price >= 300000;
+  
+  // Calculate discount percentage if discountPrice exists
+  const discountPercent = product.discountPrice && product.discountPrice < product.price
+    ? Math.round((1 - product.discountPrice / product.price) * 100)
+    : null;
   const productHref =
     typeof router.query.category === "string" && router.query.category
       ? { pathname: `/product/${product.id}`, query: { category: router.query.category } }
@@ -47,8 +52,14 @@ function ProductCard({ product, onAddToCart }) {
           }}
         />
         
+        {discountPercent && (
+          <span className="absolute top-2 left-2 rounded-br-lg bg-[#dc2626] px-2 py-1 text-[10px] font-bold text-white">
+            -{discountPercent}% OFF
+          </span>
+        )}
+        
         {!product.inStock && (
-          <span className="absolute top-2 left-2 rounded bg-red-500 px-2 py-1 text-[10px] font-bold text-white">
+          <span className="absolute top-2 right-2 rounded bg-red-500 px-2 py-1 text-[10px] font-bold text-white">
             Out of Stock
           </span>
         )}

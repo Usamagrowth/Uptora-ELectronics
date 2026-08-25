@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Head from "next/head";
 import { useForm, validateShipping } from "../hooks/useForm";
 import { useProductsContext } from "../context/ProductsContext";
 import { useSession, signIn } from "next-auth/react";
@@ -37,11 +38,11 @@ function SectionHeading({ num, title, note }) {
 }
 
 const trustItems = [
-  {image: "/securebg.png"},
-  {image:"/genuinebg.png"},
-  {image:"/deliverybg.png"},
-  {image:"/warrantybg.png"},
-  {image:"/customer-servicesbg.png"},
+  {image: "/securebg.png", label: "Secure Payments"},
+  {image:"/genuinebg.png", label: "Genuine Products"},
+  {image:"/deliverybg.png", label: "Fast Delivery"},
+  {image:"/warrantybg.png", label: "Warranty Support"},
+  {image:"/customer-servicesbg.png", label: "24/7 Customer Service"},
   ];
 
 export default function CheckoutPage() {
@@ -239,7 +240,12 @@ export default function CheckoutPage() {
   const submitting = isSubmitting || paystackLoading;
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gray-950 transition-colors">
+    <>
+      <Head>
+        <title>Checkout — Uptora Electronics</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <div className="min-h-screen overflow-x-hidden bg-gray-950 transition-colors">
       <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
         <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Link href="/" className="text-xs sm:text-sm text-gray-400 hover:text-brand-500 transition-colors shrink-0">
@@ -265,7 +271,7 @@ export default function CheckoutPage() {
                     <FormField label="Last Name" name="lastName" value={values.lastName} onChange={handleChange} onBlur={handleBlur} error={getFieldError("lastName")} placeholder="Hassan" />
                   </div>
                   <FormField label="Email" name="email" type="email" value={values.email} onChange={handleChange} onBlur={handleBlur} error={getFieldError("email")} placeholder="hassan@example.com" />
-                  <FormField label="Phone" name="phone" type="tel" value={values.phone} onChange={handleChange} onBlur={handleBlur} error={getFieldError("phone")} placeholder="08012345678" inputMode="tel" />
+                  <FormField label="Phone" name="phone" type="tel" value={values.phone} onChange={handleChange} onBlur={handleBlur} error={getFieldError("phone")} placeholder="09024988998" inputMode="tel" />
                 </div>
               </div>
 
@@ -313,8 +319,9 @@ export default function CheckoutPage() {
             {/* Trust Section */}
           <div className="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-5">
           {trustItems.map((trust, index) => (
-            <div key={index} className="justify-center w-full h-full gap-2 rounded-lg">
-              <img src={trust.image} alt="trust" className=" w-full h-full" />
+            <div key={index} className="flex flex-col items-center justify-center gap-2 rounded-lg">
+              <img src={trust.image} alt={trust.label} className="w-full h-full object-contain" />
+              <span className="text-xs text-gray-400 text-center">{trust.label}</span>
              </div>
           ))}
          </div>
@@ -347,5 +354,6 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

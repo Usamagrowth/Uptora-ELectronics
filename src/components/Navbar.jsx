@@ -4,9 +4,11 @@ import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
 import { useProductsContext } from "../context/ProductsContext";
 import { signOut } from "next-auth/react";
-import { Menu, ShoppingCart, X, Search, User } from "lucide-react";
+import { Menu, ShoppingCart, X, Search, User, Package, BadgeCheck, Phone, LockKeyhole, Truck } from "lucide-react";
 import SearchBar from "./SearchBar";
 import AuthModal from "./auth/AuthModal";
+import { useSession } from "next-auth/react";
+
 
 function Navbar({ cartCount, onCartOpen }) {
   const router = useRouter();
@@ -16,6 +18,7 @@ function Navbar({ cartCount, onCartOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { data: session } = useSession();
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -33,6 +36,12 @@ function Navbar({ cartCount, onCartOpen }) {
     fetchCategories();
   }, []);
 
+useEffect(() => {
+  if (session && authModalOpen) {
+    setAuthModalOpen(false);
+  }
+}, [session, authModalOpen]);
+
   const linkCls = (path) =>
     `text-sm font-bold transition-colors whitespace-nowrap ${
       pathname === path
@@ -48,6 +57,23 @@ function Navbar({ cartCount, onCartOpen }) {
 
   return (
     <>
+      {/* Announcement Bar */}
+      <div className="w-full bg-brand-600 text-white overflow-hidden" style={{ height: '36px' }}>
+        <div className="flex items-center h-full animate-marquee whitespace-nowrap">
+          <span className="text-xs font-medium px-8">
+            <Package className="inline-block w-4 h-4 mr-1" /> Free delivery on orders above ₦200,000 &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <BadgeCheck className="inline-block w-4 h-4 mr-1" /> 100% Genuine Products &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <Phone className="inline-block w-4 h-4 mr-1" /> Call: 09024988998 &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <LockKeyhole className="inline-block w-4 h-4 mr-1" /> Secure Payment via Paystack &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <Package className="inline-block w-4 h-4 mr-1" /> Free delivery on orders above ₦200,000 &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <BadgeCheck className="inline-block w-4 h-4 mr-1" /> 100% Genuine Products &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <Phone className="inline-block w-4 h-4 mr-1" /> Call: 09024988998 &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <LockKeyhole className="inline-block w-4 h-4 mr-1" /> Secure Payment via Paystack &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <Truck className="inline-block w-4 h-4 mr-1" /> Currently deliver to only ibadan
+          </span>
+        </div>
+      </div>
+
       <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur">
         <div className="mx-auto max-w-7xl px-1 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">

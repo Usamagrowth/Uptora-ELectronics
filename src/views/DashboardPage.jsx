@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Head from "next/head";
 import { useSession } from "next-auth/react";
 import {
   Package,
@@ -60,6 +61,12 @@ function DashboardPage() {
     fetchOrders();
   }, [session, status]);
 
+useEffect(() => {
+  if (session && authModalOpen) {
+    setAuthModalOpen(false);
+  }
+}, [session, authModalOpen]);
+
   const stats = useMemo(() => {
     const totalSpent = orders.reduce((sum, o) => sum + (o.total || 0), 0);
     const delivered = orders.filter((o) => o.deliveryStatus === "Delivered").length;
@@ -74,7 +81,7 @@ function DashboardPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
         <Loader2 className="w-8 h-8 text-brand-500 animate-spin" />
       </div>
     );
@@ -82,6 +89,7 @@ function DashboardPage() {
 
   if (!session) {
     return (
+      <>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col items-center justify-center gap-5 p-6 text-center">
         <div className="w-16 h-16 rounded-2xl bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center">
           <User className="w-8 h-8 text-brand-500" />
@@ -97,11 +105,18 @@ function DashboardPage() {
           Sign in
         </button>
       </div>
+       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+   </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
+    <>
+      <Head>
+        <title>My Orders — Uptora Electronics</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         {/* Header */}
         <div className="mb-8">
@@ -268,10 +283,11 @@ function DashboardPage() {
           </section>
         </div>
 
-        {/* Auth Modal */}
-        <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
-      </main>
+       </main>
     </div>
+     {/* Auth Modal */}
+    <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+    </>
   );
 }
 

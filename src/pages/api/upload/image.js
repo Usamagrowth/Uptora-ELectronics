@@ -1,8 +1,5 @@
-import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../lib/auth-options";
-
-export const runtime = "nodejs";
 
 // Check if Cloudinary is configured
 const isCloudinaryConfigured = () => {
@@ -13,49 +10,46 @@ const isCloudinaryConfigured = () => {
   );
 };
 
-export async function POST(request) {
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(req, res, authOptions);
 
     if (!session?.user?.isAdmin) {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+      return res.status(403).json({ error: "Admin access required" });
     }
 
     if (!isCloudinaryConfigured()) {
-      return NextResponse.json(
-        { error: "Cloudinary is not configured. Please add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET to your environment variables." },
-        { status: 400 }
+      return res.status(400).json(
+        { error: "Cloudinary is not configured. Please add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET to your environment variables." }
       );
     }
 
-    const formData = await request.formData();
-    const file = formData.get("file");
+    const formData = req.body;
+    const file = formData.file;
 
     if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+      return res.status(400).json({ error: "No file provided" });
     }
 
     // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: "Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed." },
-        { status: 400 }
+      return res.status(400).json(
+        { error: "Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed." }
       );
     }
 
     // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      return NextResponse.json(
-        { error: "File size exceeds 5MB limit" },
-        { status: 400 }
+      return res.status(400).json(
+        { error: "File size exceeds 5MB limit" }
       );
     }
-
-    // Convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
 
     // Upload to Cloudinary
     const cloudinary = require("cloudinary").v2;
@@ -79,12 +73,11 @@ export async function POST(request) {
         (error, result) => {
           if (error) {
             console.error("[Cloudinary upload error]", error);
-            reject(NextResponse.json(
-              { error: "Failed to upload image to Cloudinary" },
-              { status: 500 }
+            reject(res.status(500).json(
+              { error: "Failed to upload image to Cloudinary" }
             ));
           } else {
-            resolve(NextResponse.json({
+            resolve(res.status(200).json({
               success: true,
               url: result.secure_url,
               publicId: result.public_id,
@@ -93,13 +86,12 @@ export async function POST(request) {
             }));
           }
         }
-      ).end(buffer);
+      ).end(file.buffer);
     });
   } catch (error) {
     console.error("[api/upload/image]", error);
-    return NextResponse.json(
-      { error: error.message || "Image upload failed" },
-      { status: 500 }
+    return res.status(500).json(
+      { error: error.message || "Image upload failed" }
     );
   }
 }

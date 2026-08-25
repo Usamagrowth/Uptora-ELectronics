@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Head from "next/head";
 import {
   BadgeCheck,
   Headphones,
@@ -22,18 +23,10 @@ import ProductCard from "../components/ProductCard";
 import ResultsSummary from "../components/ResultsSummary";
 
 const heroSlides = [
-   {
-    image: "/hero-banner.png",
-  },
-  {
-    image: "/banners/flash-sale.png",
-  },
- {
-    image: "/banners/gaming.png",
-  },
-  {
-    image: "/hero-banner3.png",
-  },
+  { image: "/hero-banner.png",         href: "/?section=featured" },
+  { image: "/banners/flash-sale.png",  href: "/?section=best-sellers" },
+  { image: "/banners/gaming.png",      href: "/?category=Gaming" },
+  { image: "/hero-banner3.png",        href: "/?category=Phones%20%26%20Tablets" },
 ];
 
 const trustItems = [
@@ -53,9 +46,22 @@ const brandLogos = [
   { name: "deye", image: "/deye.jpg" },
 ];
 
-const flyerBanners = [
-  { title: "Inverter & Battery", image: "/banners/solar-b.png" },
-  { title: "Phones & Tablets", image: "/banners/phones1-b.png" },
+const categoryBanners = [
+  { name: "Inverter & Battery",       image: "/banners/solar-b.png",          href: "/?category=Inverter%20%26%20Battery" },
+  { name: "Solar Panels",             image: "/banners/solar11.png",           href: "/?category=Solar%20Panels" },
+  { name: "Televisions",              image: "/banners/tv.png",                href: "/?category=Televisions" },
+  { name: "Air Conditioners",         image: "/banners/ac11.png",              href: "/?category=Air%20Conditioners" },
+  { name: "Refrigerators",            image: "/banners/refrigerator11.png",    href: "/?category=Refrigerators" },
+  { name: "Freezers",                 image: "/banners/freezer11.png",         href: "/?category=Freezers" },
+  { name: "Washing Machines",         image: "/banners/washing-machine11.png", href: "/?category=Washing%20Machines" },
+  { name: "Generators",               image: "/banners/generator.png",         href: "/?category=Generators" },
+  { name: "Kitchen Appliances",       image: "/banners/kitchen11.png",         href: "/?category=Kitchen%20Appliances" },
+  { name: "Home & Office Appliances", image: "/banners/home-appliances.png",   href: "/?category=Home%20%26%20Office%20Appliances" },
+  { name: "Gaming",                   image: "/banners/gaming11.png",          href: "/?category=Gaming" },
+  { name: "Phones & Tablets",         image: "/banners/phone11.png",           href: "/?category=Phones%20%26%20Tablets" },
+  { name: "Computing",                image: "/banners/laptop11.png",          href: "/?category=Computing" },
+  { name: "Audio & Accessories",      image: "/banners/audio11.png",           href: "/?category=Audio%20%26%20Accessories" },
+  { name: "Electronics & Gadgets",    image: "/banners/electronics.png",       href: "/?category=Electronics%20%26%20Gadgets" },
 ];
 
 const sectionBanners = {
@@ -346,78 +352,88 @@ function ProductsPage() {
   }
 
   return (
-    <div className="bg-gray-50 text-gray-950 z-[50]">
+    <>
+      <Head>
+        <title>Uptora Electronics — Genuine Electronics in Ibadan, Nigeria</title>
+        <meta name="description" content="Shop TVs, ACs, Solar panels, inverters, phones, laptops and more at Uptora Electronics. Fast delivery in Ibadan and across Nigeria. Secure payments via Paystack." />
+        <meta name="keywords" content="electronics Ibadan, buy TV Nigeria, solar panels Ibadan, inverter battery Nigeria, phones laptops Nigeria, Uptora Electronics" />
+        <meta property="og:title" content="Uptora Electronics — Genuine Electronics in Ibadan" />
+        <meta property="og:description" content="Nigeria's trusted electronics store. TVs, ACs, Solar, Inverters, Phones and more." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://uptora-electronics.vercel.app" />
+        <meta property="og:image" content="https://uptora-electronics.vercel.app/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <link rel="canonical" href="https://uptora-electronics.vercel.app" />
+      </Head>
+      <div className="bg-gray-50 text-gray-950 z-[50]">
       {/* Hero Section */}
       {selectedCategory === "All" && !searchQuery && !router.query.section ? (
         <div 
-          className="relative h-[190px] sm:h-[240px] md:h-[270px] lg:h-[320px] overflow-hidden"
+          className="relative h-[220px] sm:h-[320px] md:h-[420px] lg:h-[500px] overflow-hidden group"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
           {heroSlides.map((slide, index) => (
-            <div
+            <Link
               key={index}
-              className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-                index === currentSlide ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+              href={slide.href}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
               }`}
             >
-              <img src={slide.image} alt="" className="h-full w-full object-cover object-center" />
-            </div>
+              <img
+                src={slide.image}
+                alt={`Uptora Electronics offer ${index + 1}`}
+                className="h-full w-full object-cover object-center"
+                draggable={false}
+              />
+            </Link>
           ))}
           
           {/* Navigation Arrows */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-full shadow-lg hover:bg-white transition hidden sm:block"
+            aria-label="Previous slide"
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-brand-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg hover:bg-brand-600 hidden sm:flex"
           >
-           </button>
+            <ChevronLeft className="h-5 w-5" />
+          </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 rounded-full  shadow-lg hover:bg-white transition hidden sm:block"
+            aria-label="Next slide"
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-brand-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg hover:bg-brand-600 hidden sm:flex"
           >
-            </button>
+            <ChevronRight className="h-5 w-5" />
+          </button>
           
           {/* Slider Dots */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
             {heroSlides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`h-3 w-3 rounded-full transition-all ${
-                  index === currentSlide ? 'bg-white w-8' : 'bg-white/50'
+                aria-label={`Slide ${index + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  index === currentSlide
+                    ? 'bg-brand-500 w-7'
+                    : 'bg-white/60 w-2 hover:bg-white'
                 }`}
               />
             ))}
           </div>
         </div>
-      ) : routeSection && sectionBanners[routeSection] ? (
-        <div className="relative h-full overflow-hidden">
-          <img 
-            src={sectionBanners[routeSection].image} 
-            alt="product-image"
-            className="h-full w-full object-contain object-center" 
-          />
-        </div>
-      ) : (
-        <>
-          {/* Category Hero Image */}
-          <div className="relative h-full overflow-hidden">
-            <img 
-              src={categoryCopy[selectedCategory]?.image || "/hero-banner.png"} 
-              alt="product-image" 
-              className="h-full w-full object-contain object-center"
-              style={{ objectPosition: 'center 20%' }}
-            />
-          </div>
-        </>
-      )}
+      ) : null}
+
+      {/* Category Pill Bar */}
+      
 
       <main className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 sm:pb-20 lg:px-8">
         <section className="-mt-6 grid grid-cols-3 gap-4 sm:grid-cols-5">
           {trustItems.map((trust, index) => (
-            <div key={index} className="flex rounded-lg ">
+            <div key={index} className="flex flex-col items-center rounded-lg ">
               <img src={trust.image} alt={trust.title} className="h-20 w-20 object-contain" />
+              <span className="text-xs text-gray-600 text-center mt-2">{trust.title}</span>
             </div>
           ))}
         </section>
@@ -431,18 +447,35 @@ function ProductsPage() {
               onViewAll={<button onClick={() => handleViewAll("new-arrivals")} className="text-sm  font-bold text-brand-600 hover:text-brand-700">View all →</button>}
             />
             
-            {/* Flyer Banners */}
+            {/* Category Showcase */}
             <section className="py-6 sm:py-8">
-              <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-                {flyerBanners.map((banner, index) => (
-                  <div key={index} className="relative h-[195px] sm:h-[300px] md:h-[330px] lg:h-[350px] overflow-hidden rounded-lg cursor-pointer" onClick={() => {
-                    router.push({ pathname: "/", query: { category: banner.title } });
-                  }}>
-                    <img src={banner.image} alt={banner.title} className="h-full w-full object-cover object-center" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                      <h3 className="text-xl font-bold text-white">{banner.title}</h3>
+              <SectionHeader
+                title="Shop by Category"
+                action={null}
+              />
+              <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide">
+                {categoryBanners.map((cat) => (
+                  <Link
+                    key={cat.name}
+                    href={cat.href}
+                    className="group relative flex-shrink-0 w-[160px] sm:w-[200px] md:w-[220px] rounded-xl overflow-hidden cursor-pointer border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                  >
+                    <div className="h-[130px] sm:h-[160px] w-full overflow-hidden">
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
-                  </div>
+                    <div className="bg-white px-3 py-2.5">
+                      <p className="text-xs font-bold text-gray-900 leading-tight line-clamp-1">
+                        {cat.name}
+                      </p>
+                      <p className="text-[10px] font-semibold text-brand-600 mt-0.5">
+                        Shop Now →
+                      </p>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -669,6 +702,7 @@ function ProductsPage() {
         }
       `}</style>
     </div>
+    </>
   );
 }
 

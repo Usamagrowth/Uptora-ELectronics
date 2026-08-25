@@ -29,28 +29,46 @@ export default function ImageUpload({ images, setImages, maxImages = 5 }) {
     setError("");
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      // Convert file to base64 for Pages Router API
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64 = reader.result;
+        
+        const response = await fetch("/api/upload/image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            file: {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              buffer: base64,
+            },
+          }),
+        });
 
-      const response = await fetch("/api/upload/image", {
-        method: "POST",
-        body: formData,
-      });
+        const data = await response.json();
 
-      const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || "Upload failed");
+        }
 
-      if (!response.ok) {
-        throw new Error(data.error || "Upload failed");
-      }
-
-      if (data.success && data.url) {
-        setImages([...images, data.url]);
-        setUrlInput("");
-      }
+        if (data.success && data.url) {
+          setImages([...images, data.url]);
+          setUrlInput("");
+        }
+      };
+      reader.onerror = () => {
+        setError("Failed to read file");
+        setUploading(false);
+      };
     } catch (err) {
       setError(err.message || "Failed to upload image");
-    } finally {
       setUploading(false);
+    } finally {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Head from "next/head";
 import { BadgeCheck, Headphones, LockKeyhole, Package, ShieldCheck, Truck, Zap, MapPin, Phone, Mail } from "lucide-react";
 
 const pillars = [
@@ -36,7 +37,13 @@ const pillars = [
 
 export default function AboutPage() {
   return (
-    <div className=" bg-white text-black">
+    <>
+      <Head>
+        <title>About Us — Uptora Electronics Ibadan</title>
+        <meta name="description" content="Learn about Uptora Electronics, Ibadan's trusted source for genuine electronics, solar solutions, and home appliances with warranty support." />
+        <link rel="canonical" href="https://uptora-electronics.vercel.app/about" />
+      </Head>
+      <div className=" bg-white text-black">
       {/* Hero Section with Brand Colors */}
       <section>
         <div className="max-w-4xl mx-auto pt-5 px-6 sm:px-6 lg:px-8 sm:pt-6">
@@ -126,5 +133,6 @@ export default function AboutPage() {
         </section>
       </main>
     </div>
+    </>
   );
 }

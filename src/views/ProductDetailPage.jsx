@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Head from "next/head";
 import { useProductsContext } from "../context/ProductsContext";
 import ProductCard from "../components/ProductCard";
 import { BadgeCheck, Truck, LockKeyhole, ShieldCheck, Headphones } from "lucide-react";
@@ -15,22 +16,19 @@ function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [recentProducts, setRecentProducts] = useState([]);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [relatedLoading, setRelatedLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
 
   const qtyRef = useRef(null);
 
-  const relatedProducts = useMemo(() => {
-    if (!product) return [];
-    return [];
-  }, [product]);
-
   const trustItems = [
-  {image: "/secure.png"},
-  {image:"/genuine.png"},
-  {image:"/delivery.png"},
-  {image:"/warranty.png"},
-  {image:"/customer-services.png"},
+  {image: "/secure.png", label: "Secure Payments"},
+  {image:"/genuine.png", label: "Genuine Products"},
+  {image:"/delivery.png", label: "Fast Delivery"},
+  {image:"/warranty.png", label: "Warranty Support"},
+  {image:"/customer-services.png", label: "24/7 Customer Service"},
   ];
 
   useEffect(() => {
@@ -108,6 +106,46 @@ function ProductDetailPage() {
     }
   }, [product]);
 
+  // Fetch related products
+  useEffect(() => {
+    if (!product) return;
+
+    async function fetchRelatedProducts() {
+      setRelatedLoading(true);
+      try {
+        let related = [];
+
+        // First try to get products from same category
+        const categoryRes = await fetch(`/api/products?category=${encodeURIComponent(product.category)}&limit=8`);
+        if (categoryRes.ok) {
+          const categoryData = await categoryRes.json();
+          const categoryProducts = (categoryData.products || []).filter(p => p.id !== product.id);
+          related = categoryProducts.slice(0, 4);
+        }
+
+        // If we need more products, fetch from same brand
+        if (related.length < 4 && product.brand) {
+          const brandRes = await fetch(`/api/products?brand=${encodeURIComponent(product.brand)}&limit=8`);
+          if (brandRes.ok) {
+            const brandData = await brandRes.json();
+            const brandProducts = (brandData.products || [])
+              .filter(p => p.id !== product.id && !related.some(r => r.id === p.id));
+            related = [...related, ...brandProducts].slice(0, 4);
+          }
+        }
+
+        setRelatedProducts(related);
+      } catch (error) {
+        console.error("Error fetching related products:", error);
+        setRelatedProducts([]);
+      } finally {
+        setRelatedLoading(false);
+      }
+    }
+
+    fetchRelatedProducts();
+  }, [product]);
+
   function handleAddToCart() {
     const productToAdd = selectedOption ? { ...product, selectedOption, price: selectedOption.price } : product;
     for (let i = 0; i < quantity; i++) addToCart(productToAdd);
@@ -157,7 +195,33 @@ function ProductDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 transition-colors">
+    <>
+      <Head>
+        <title>{product.name} — Uptora Electronics</title>
+        <meta name="description" content={product.description?.slice(0, 155)} />
+        <meta property="og:title" content={`${product.name} — Uptora Electronics`} />
+        <meta property="og:image" content={product.image} />
+        <meta property="og:type" content="product" />
+        <link rel="canonical" content={`https://uptora-electronics.vercel.app/product/${product.id}`} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "image": product.image,
+          "description": product.description,
+          "brand": { "@type": "Brand", "name": product.brand || "Uptora Electronics" },
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "NGN",
+            "price": product.price,
+            "availability": product.inStock 
+              ? "https://schema.org/InStock" 
+              : "https://schema.org/OutOfStock",
+            "seller": { "@type": "Organization", "name": "Uptora Electronics" }
+          }
+        })}</script>
+      </Head>
+      <div className="min-h-screen bg-gray-50 transition-colors">
       <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
 
         {/* Back button */}
@@ -308,9 +372,10 @@ function ProductDetailPage() {
 
         {/* Trust Section */}
         <section className="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-5">
-          {trustItems.map((trust) => (
-            <div key={trust} className="justify-center w-full h-full gap-2 rounded-lg">
-              <img src={trust.image} alt="trust" className=" w-full h-full" />
+          {trustItems.map((trust, index) => (
+            <div key={index} className="flex flex-col items-center justify-center gap-2 rounded-lg">
+              <img src={trust.image} alt={trust.label} className="w-full h-full object-contain" />
+              <span className="text-xs text-gray-600 text-center">{trust.label}</span>
              </div>
           ))}
         </section>
@@ -333,22 +398,40 @@ function ProductDetailPage() {
         )}
 
         {/* Related Products Section */}
-        {relatedProducts.length > 0 && (
+        {relatedLoading ? (
           <section className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">You May Also Like</h2>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {relatedProducts.map((relatedProduct) => (
-                <ProductCard
-                  key={relatedProduct.id}
-                  product={relatedProduct}
-                  onAddToCart={handleAddToCart}
-                />
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex flex-col gap-3 p-3 sm:p-4 border border-gray-200 rounded-lg bg-white">
+                  <div className="aspect-[4/3] bg-gray-200 rounded-lg animate-pulse" />
+                  <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4" />
+                  <div className="mt-auto pt-3">
+                    <div className="h-8 bg-gray-200 rounded animate-pulse" />
+                  </div>
+                </div>
               ))}
             </div>
           </section>
-        )}
+        ) : relatedProducts.length > 0 ? (
+          <section className="mt-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">You May Also Like</h2>
+            <div className="flex gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:overflow-visible">
+              {relatedProducts.map((relatedProduct) => (
+                <div key={relatedProduct.id} className="relative flex-shrink-0 w-48 sm:w-auto">
+                  <ProductCard
+                    product={relatedProduct}
+                    onAddToCart={handleAddToCart}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
     </div>
+    </>
   );
 }
 

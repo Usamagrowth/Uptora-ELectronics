@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import Head from "next/head";
 import { useAuth } from "../context/AuthContext";
 import {
   Package,
@@ -330,7 +331,12 @@ function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
+    <>
+      <Head>
+        <title>Admin — Uptora Electronics</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -612,6 +618,7 @@ function AdminPage() {
         <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
       </main>
     </div>
+    </>
   );
 }
 
