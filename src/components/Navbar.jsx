@@ -126,7 +126,7 @@ useEffect(() => {
                   {user.image ? (
                     <img src={user.image} alt={user.name} className="h-6 w-6 rounded-full" />
                   ) : (
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-100 text-[10px] text-brand-600">U</span>
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-100 text-[10px] text-brand-600">A</span>
                   )}
                   <span>Sign out</span>
                 </button>

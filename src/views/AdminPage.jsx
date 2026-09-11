@@ -378,7 +378,7 @@ function AdminPage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6  flex overflow-x-auto gap-2 border-b border-gray-200 dark:border-gray-800">
+        <div className="mb-6  flex overflow-x-auto gap-2 border-b border-gray-200">
           {tabs.map((tab) => (
             <button
               key={tab.key}
