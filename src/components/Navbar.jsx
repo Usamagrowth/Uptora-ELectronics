@@ -199,7 +199,7 @@ useEffect(() => {
               <Link
                 key={category.id}
                 href={`/?category=${encodeURIComponent(category.name)}`}
-                className={linkCls(`/?category=${encodeURIComponent(category.name)}`)}
+                className={linkCls(`/?category=${encodeURIComponent(category.name)}`)} 
                 onClick={() => setMenuOpen(false)}
               >
                 {category.name}

@@ -49,7 +49,8 @@ const brandLogos = [
 
 const categoryBanners = [
   { name: "Inverter & Battery",       image: "/banners/solar11.png",          href: "/?category=Inverter%20%26%20Battery" },
-  { name: "Solar Panels",             image: "/banners/solar11.png",           href: "/?category=Solar%20Panel" },
+  { name: "Solar Panel",             image: "/banners/solar11.png",           href: "/?category=Solar%20Panel" },
+  { name: "Power Stations",          image: "/banners/solar11.png",           href: "/?category=Power%20Stations" },
   { name: "Televisions",              image: "/banners/tv.png",                href: "/?category=Televisions" },
   { name: "Air Conditioners",         image: "/banners/ac11.png",              href: "/?category=Air%20Conditioners" },
   { name: "Refrigerators",            image: "/banners/refrigerator11.png",    href: "/?category=Refrigerators" },
@@ -57,12 +58,12 @@ const categoryBanners = [
   { name: "Washing Machines",         image: "/banners/washing-machine11.png", href: "/?category=Washing%20Machines" },
   { name: "Generators",               image: "/banners/generator.png",         href: "/?category=Generators" },
   { name: "Kitchen Appliances",       image: "/banners/kitchen11.png",         href: "/?category=Kitchen%20Appliances" },
-  { name: "Home & Office Appliances", image: "/banners/home-appliances.png",   href: "/?category=Home%20%26%20Office%20Appliances" },
   { name: "Gaming",                   image: "/banners/gaming11.png",          href: "/?category=Gaming" },
   { name: "Phones & Tablets",         image: "/banners/phone11.png",           href: "/?category=Phones%20%26%20Tablets" },
   { name: "Computing",                image: "/banners/laptop11.png",          href: "/?category=Computing" },
   { name: "Audio & Accessories",      image: "/banners/audio11.png",           href: "/?category=Audio%20%26%20Accessories" },
-  { name: "Electronics & Gadgets",    image: "/banners/electronics.png",       href: "/?category=Electronics%20%26%20Gadgets" },
+  { name: "Electronics",              image: "/banners/electronics.png",       href: "/?category=Electronics" },
+  { name: "Appliances",               image: "/banners/home-appliances.png",    href: "/?category=Appliances" },
 ];
 
 const sectionBanners = {
@@ -161,7 +162,9 @@ function ProductsPage() {
   // Mapping of category names to their banner images
   const categoryImageMap = useMemo(() => ({
     "Inverter & Battery": "/banners/solar11.png",
+    "Solar Panel": "/banners/solar11.png",
     "Solar Panels": "/banners/solar11.png",
+    "Power Stations": "/banners/solar11.png",
     "Televisions": "/banners/tv.png",
     "Air Conditioners": "/banners/ac11.png",
     "Refrigerators": "/banners/refrigerator11.png",
@@ -175,6 +178,8 @@ function ProductsPage() {
     "Computing": "/banners/laptop11.png",
     "Audio & Accessories": "/banners/audio11.png",
     "Electronics & Gadgets": "/banners/electronics.png",
+    "Electronics": "/banners/electronics.png",
+    "Appliances": "/banners/home-appliances.png",
   }), []);
 
   const homepageMode = selectedCategory === "All" && !searchQuery && !routeSection;
@@ -439,7 +444,7 @@ function ProductsPage() {
           />
         </div>
       ) : (
-        <div className="relative h-[190px] sm:h-[320px] md:h-[420px] lg:h-[500px] overflow-hidden">
+        <div className="relative h-full sm:h-[320px] md:h-[420px] lg:h-[500px] overflow-hidden">
           <img 
             src={categoryImageMap[selectedCategory] || "/banners/new-arrival11.png"} 
             alt={`${selectedCategory} category`}

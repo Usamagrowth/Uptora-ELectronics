@@ -4,7 +4,7 @@ import Link from "next/link";
 import Head from "next/head";
 import { useProductsContext } from "../context/ProductsContext";
 import ProductCard from "../components/ProductCard";
-import { BadgeCheck, Truck, LockKeyhole, ShieldCheck, Headphones } from "lucide-react";
+import { BadgeCheck, Truck, LockKeyhole, ShieldCheck, Headphones, Package } from "lucide-react";
 
 function ProductDetailPage() {
   const router = useRouter();
@@ -202,7 +202,9 @@ function ProductDetailPage() {
         <meta property="og:title" content={`${product.name} — Uptora Electronics`} />
         <meta property="og:image" content={product.image} />
         <meta property="og:type" content="product" />
-        <link rel="canonical" content={`https://uptora-electronics.vercel.app/product/${product.id}`} />
+        <link rel="canonical"
+   href={`https://uptora-electronics.vercel.app/product/${product.id}`}
+/>
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
@@ -274,7 +276,8 @@ function ProductDetailPage() {
                 <span className="text-xs font-bold text-brand-500 uppercase tracking-widest">
                   {product.category}
                 </span>
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mt-1 leading-tight">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mt-1 leading-tight flex items-center gap-2">
+                  <Package className="w-6 h-6 text-brand-500" />
                   {product.name}
                 </h1>
               </div>
@@ -430,7 +433,6 @@ function ProductDetailPage() {
           </section>
         ) : null}
       </div>
-    </div>
     </>
   );
 }
