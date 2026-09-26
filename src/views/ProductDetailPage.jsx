@@ -433,6 +433,7 @@ function ProductDetailPage() {
           </section>
         ) : null}
       </div>
+      </div>
     </>
   );
 }
