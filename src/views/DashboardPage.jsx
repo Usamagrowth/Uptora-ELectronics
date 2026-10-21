@@ -11,8 +11,10 @@ import {
   Loader2,
   Lock,
   Save,
+  Settings,
 } from "lucide-react";
 import AuthModal from "../components/auth/AuthModal";
+import { getCanonicalUrl } from "../lib/site";
 
 function formatNaira(amount) {
   return `₦${amount.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -34,11 +36,16 @@ function StatusBadge({ status }) {
 
 function DashboardPage() {
   const { data: session, status } = useSession();
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("orders");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (status === "loading" || !session) return;
@@ -77,9 +84,10 @@ useEffect(() => {
   const tabs = [
     { key: "orders", label: "Order History", icon: Package },
     { key: "profile", label: "My Profile", icon: User },
+    { key: "settings", label: "Account Settings", icon: Settings, href: "/dashboard/settings" },
   ];
 
-  if (status === "loading") {
+  if (!mounted || status === "loading") {
     return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
         <Loader2 className="w-8 h-8 text-brand-500 animate-spin" />
@@ -114,7 +122,9 @@ useEffect(() => {
     <>
       <Head>
         <title>My Orders — Uptora Electronics</title>
+        <meta name="description" content="View your order history and account settings at Uptora Electronics." />
         <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href={getCanonicalUrl("/dashboard")} />
       </Head>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -171,18 +181,32 @@ useEffect(() => {
               </div>
               <nav className="space-y-1">
                 {tabs.map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key)}
-                    className={`w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
-                      activeTab === tab.key
-                        ? "bg-brand-500 text-white shadow-sm"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    }`}
-                  >
-                    <tab.icon className="w-4 h-4" />
-                    {tab.label}
-                  </button>
+                  tab.href ? (
+                    <Link
+                      key={tab.key}
+                      href={tab.href}
+                      className={`w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
+                        "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      <tab.icon className="w-4 h-4" />
+                      {tab.label}
+                      <ChevronRight className="w-4 h-4 ml-auto" />
+                    </Link>
+                  ) : (
+                    <button
+                      key={tab.key}
+                      onClick={() => setActiveTab(tab.key)}
+                      className={`w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
+                        activeTab === tab.key
+                          ? "bg-brand-500 text-white shadow-sm"
+                          : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      <tab.icon className="w-4 h-4" />
+                      {tab.label}
+                    </button>
+                  )
                 ))}
               </nav>
             </div>

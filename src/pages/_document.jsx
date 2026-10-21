@@ -7,8 +7,8 @@ export default function Document() {
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
-        <meta name="theme-color" content="#f97316" />
-        <meta name="description" content="Uptora Electronics — shop solar, phones, kitchen tech and more." />
+        <meta name="theme-color" content="#1b9810" />
+        <meta name="description" content="Uptora Electronics — Nigeria's trusted electronics store. Shop TVs, ACs, Solar panels, Inverters, Phones, Laptops and more with fast delivery and secure payments." />
         
         {/* PWA */}
         <link rel="manifest" href="/manifest.json" />

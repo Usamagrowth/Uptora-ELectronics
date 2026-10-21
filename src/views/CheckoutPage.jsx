@@ -11,6 +11,7 @@ import usePaystackCheckout, {
   getPendingPaymentRef,
 } from "../hooks/usePaystackCheckout";
 import { Lock, ShieldCheck, Loader2, BadgeCheck, Truck, Headphones } from "lucide-react";
+import { getCanonicalUrl } from "../lib/site";
 
 const INITIAL = {
   firstName: "",
@@ -243,7 +244,9 @@ export default function CheckoutPage() {
     <>
       <Head>
         <title>Checkout — Uptora Electronics</title>
+        <meta name="description" content="Complete your purchase at Uptora Electronics. Secure checkout with Paystack." />
         <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href={getCanonicalUrl("/checkout")} />
       </Head>
       <div className="min-h-screen overflow-x-hidden bg-gray-950 transition-colors">
       <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-6 sm:py-10">

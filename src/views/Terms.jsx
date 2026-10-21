@@ -1,11 +1,14 @@
 import Head from "next/head";
 import Link from "next/link";
+import { getCanonicalUrl } from "../lib/site";
 
 export default function Terms() {
   return (
     <>
       <Head>
         <title>Terms of Service - Uptora Electronics</title>
+        <meta name="description" content="Read Uptora Electronics' terms of service. Understand our product availability, payment terms via Paystack, delivery policies, and customer responsibilities." />
+        <link rel="canonical" href={getCanonicalUrl("/terms")} />
       </Head>
       <div className="min-h-screen bg-[#f7f8f5] px-4 py-12 sm:px-6 lg:px-8 text-gray-900">
         <div className="mx-auto max-w-3xl rounded-2xl bg-white p-8 shadow-sm border border-gray-100">

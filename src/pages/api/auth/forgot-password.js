@@ -1,5 +1,6 @@
 import { getDb } from "../../../lib/mongodb";
 import crypto from "crypto";
+import { sendPasswordResetEmail } from "../../../lib/email";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -33,9 +34,19 @@ export default async function handler(req, res) {
         }
       );
 
-      // TODO: Send email with reset link
-      // For now, just log the token (in production, this should be sent via email)
-      console.log(`[Password Reset] Reset token for ${email}: ${resetToken}`);
+      // Send email with reset link
+      const emailResult = await sendPasswordResetEmail({ to: email, resetToken });
+
+      if (emailResult.skipped) {
+        console.warn(`[Password Reset] Email skipped (${emailResult.reason}) for ${email}`);
+        console.warn("[Password Reset] RESEND_API_KEY not configured - cannot send reset emails");
+      } else if (!emailResult.success) {
+        console.error(`[Password Reset] Email sending failed to ${email}:`, emailResult.error);
+        // Still return success to prevent email enumeration, but log the failure
+        // In production, you might want to alert admins about this
+      } else {
+        console.log(`[Password Reset] Password reset email sent successfully to ${email}`);
+      }
     }
 
     return res.status(200).json({
@@ -44,6 +55,19 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("[api/auth/forgot-password]", error);
+    // Log more details for debugging
+    console.error("[api/auth/forgot-password] Error details:", {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+    });
+
+    // Still return a generic error to prevent enumeration
+    // But differentiate between system errors and invalid requests
+    if (error.message.includes("MongoDB connection failed")) {
+      return res.status(503).json({ error: "Service temporarily unavailable. Please try again later." });
+    }
+
     return res.status(500).json({ error: "Failed to process request" });
   }
 }

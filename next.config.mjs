@@ -10,6 +10,7 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL || vercelUrl || "http://localhost:3000",
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || vercelUrl || "http://localhost:3000",
   },
   turbopack: {
     root: __dirname,

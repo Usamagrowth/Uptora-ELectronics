@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Head from "next/head";
 import { BadgeCheck, Headphones, LockKeyhole, Package, ShieldCheck, Truck, Zap, MapPin, Phone, Mail } from "lucide-react";
+import { getCanonicalUrl } from "../lib/site";
 
 const pillars = [
   {
@@ -41,7 +42,7 @@ export default function AboutPage() {
       <Head>
         <title>About Us — Uptora Electronics Ibadan</title>
         <meta name="description" content="Learn about Uptora Electronics, Ibadan's trusted source for genuine electronics, solar solutions, and home appliances with warranty support." />
-        <link rel="canonical" href="https://uptora-electronics.vercel.app/about" />
+        <link rel="canonical" href={getCanonicalUrl("/about")} />
       </Head>
       <div className=" bg-white text-black">
       {/* Hero Section with Brand Colors */}

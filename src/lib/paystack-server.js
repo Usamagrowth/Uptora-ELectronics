@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { getAuthUrl } from "./auth";
+import { getSiteUrl } from "./site";
 import { getPaystackSecretKey, validatePaystackKeys } from "./paystack-config";
 
 const PAYSTACK_BASE = "https://api.paystack.co";
@@ -54,7 +55,7 @@ export async function initializePaystackTransaction({
   validatePaystackKeys();
 
   const secretKey = getSecretKey();
-  const baseUrl = getAuthUrl() || "http://localhost:3000";
+  const baseUrl = getSiteUrl() || getAuthUrl() || "http://localhost:3000";
   const reference = `UPTORA-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
   const response = await fetch(`${PAYSTACK_BASE}/transaction/initialize`, {

@@ -12,13 +12,21 @@ import { useSession } from "next-auth/react";
 function Navbar({ cartCount, onCartOpen }) {
   const router = useRouter();
   const pathname = router.pathname;
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, status: authStatus } = useAuth();
   const { searchQuery, setSearchQuery } = useProductsContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const { data: session } = useSession();
+  const [mounted, setMounted] = useState(false);
   const [categories, setCategories] = useState([]);
+
+  // Ensure client-side only rendering to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Don't render auth-dependent UI until mounted
+  const showAuthUI = mounted && authStatus !== 'loading';
 
   useEffect(() => {
     async function fetchCategories() {
@@ -35,11 +43,11 @@ function Navbar({ cartCount, onCartOpen }) {
     fetchCategories();
   }, []);
 
-useEffect(() => {
-  if (session && authModalOpen) {
-    setAuthModalOpen(false);
-  }
-}, [session, authModalOpen]);
+  useEffect(() => {
+    if (user && authModalOpen) {
+      setAuthModalOpen(false);
+    }
+  }, [user, authModalOpen]);
 
   const linkCls = (path) =>
     `text-sm font-bold transition-colors whitespace-nowrap ${
@@ -118,7 +126,7 @@ useEffect(() => {
                 )}
               </button>
 
-              {user ? (
+              {showAuthUI && user ? (
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className="hidden items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-xs font-black text-gray-700 transition hover:bg-gray-100 md:inline-flex"
@@ -130,16 +138,16 @@ useEffect(() => {
                   )}
                   <span>Sign out</span>
                 </button>
-              ) : (
+              ) : showAuthUI && !user ? (
                 <button
                   onClick={() => setAuthModalOpen(true)}
                   className="hidden rounded-md border border-brand-500 px-3 py-2 text-xs font-black text-brand-600 transition hover:bg-brand-50 md:inline-flex"
                 >
                   Login
                 </button>
-              )}
+              ) : null}
 
-              {!user && (
+              {showAuthUI && !user && (
                 <button
                   onClick={() => setAuthModalOpen(true)}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-md text-gray-600 transition hover:bg-gray-100 md:hidden"
@@ -210,7 +218,7 @@ useEffect(() => {
             {isAdmin && <Link href="/admin" className={linkCls("/admin")} onClick={() => setMenuOpen(false)}>Admin</Link>}
           </div>
           <div className="pt-4 border-t border-gray-100 px-6">
-            {user ? (
+            {showAuthUI && user ? (
               <>
                 <div className="flex items-center gap-3 mb-4">
                   {user.image ? (
@@ -233,7 +241,7 @@ useEffect(() => {
                   Sign out
                 </button>
               </>
-            ) : (
+            ) : showAuthUI && !user ? (
               <button
                 onClick={() => {setMenuOpen(false); setAuthModalOpen(true);}}
                 className="w-full flex items-center gap-2 text-left text-sm font-black text-brand-600 py-2 hover:bg-gray-50 rounded px-2"
@@ -241,7 +249,7 @@ useEffect(() => {
                 <User className="w-4 h-4" />
                 Login
               </button>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

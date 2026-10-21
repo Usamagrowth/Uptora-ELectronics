@@ -29,6 +29,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid or expired reset token" });
     }
 
+    // Check if user has a password (Google-only accounts may not)
+    if (!user.password) {
+      return res.status(400).json({ error: "This account uses Google sign-in and does not have a password. Please sign in with Google or contact support." });
+    }
+
     // Update password
     await updateUserPassword(user._id, password);
 

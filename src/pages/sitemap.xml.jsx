@@ -1,6 +1,8 @@
+import { getCanonicalUrl } from "../lib/site";
+
 export async function getServerSideProps({ res }) {
   // Fetch all products from the API
-  const base = "https://uptora-electronics.vercel.app";
+  const base = getCanonicalUrl();
   const staticPages = ["/", "/about"];
   
   // Build product URLs

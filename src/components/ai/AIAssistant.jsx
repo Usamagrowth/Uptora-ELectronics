@@ -4,9 +4,9 @@ import { MessageSquare, Send, Sparkles, X, Loader2, ShoppingBag } from "lucide-r
 export default function AIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { 
-      role: "assistant", 
-      content: "Hi! I'm your Uptora shopping assistant. I can help you find products, compare prices, and give recommendations. What are you looking for today?" 
+    {
+      role: "assistant",
+      content: "Hi! I'm your Uptora shopping assistant. I can help you find products, compare prices, and give recommendations. What are you looking for today?"
     }
   ]);
   const [input, setInput] = useState("");

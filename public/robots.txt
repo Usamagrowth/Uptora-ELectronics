@@ -1,0 +1,15 @@
+# robots.txt for Uptora Electronics
+# https://uptoraelectronics.com
+
+User-agent: *
+Allow: /
+
+# Block private pages
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /checkout
+Disallow: /auth
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://uptoraelectronics.com/sitemap.xml

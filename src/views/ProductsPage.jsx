@@ -15,6 +15,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useProductsContext } from "../context/ProductsContext";
+import { getCanonicalUrl } from "../lib/site";
 
 import SearchBar from "../components/SearchBar";
 import CategoryFilter from "../components/CategoryFilter";
@@ -22,7 +23,7 @@ import { SortDropdown } from "../components/SortDropdown";
 import ProductCard from "../components/ProductCard";
 import ResultsSummary from "../components/ResultsSummary";
 
-const heroSlides = [
+const defaultHeroSlides = [
   { image: "/hero-banner.png",         href: "/?section=featured" },
   { image: "/banners/flash-sale.png",  href: "/?section=best-sellers" },
   { image: "/banners/gaming.png",      href: "/?category=Gaming" },
@@ -135,6 +136,7 @@ function ProductsPage() {
   const [newArrivals, setNewArrivals] = useState([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [dbCategories, setDbCategories] = useState([]);
+  const [heroSlides, setHeroSlides] = useState(defaultHeroSlides);
 
   const [flashId, setFlashId] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -157,6 +159,22 @@ function ProductsPage() {
       }
     }
     fetchCategories();
+  }, []);
+
+  // Fetch hero banner settings
+  useEffect(() => {
+    async function fetchHeroBanner() {
+      try {
+        const response = await fetch("/api/settings/hero-banner");
+        if (response.ok) {
+          const data = await response.json();
+          setHeroSlides(data.slides || defaultHeroSlides);
+        }
+      } catch (error) {
+        console.error("Error fetching hero banner:", error);
+      }
+    }
+    fetchHeroBanner();
   }, []);
 
   // Mapping of category names to their banner images
@@ -372,10 +390,25 @@ function ProductsPage() {
         <meta property="og:title" content="Uptora Electronics — Genuine Electronics in Ibadan" />
         <meta property="og:description" content="Nigeria's trusted electronics store. TVs, ACs, Solar, Inverters, Phones and more." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://uptora-electronics.vercel.app" />
-        <meta property="og:image" content="https://uptora-electronics.vercel.app/og-image.png" />
+        <meta property="og:url" content={getCanonicalUrl()} />
+        <meta property="og:image" content={`${getCanonicalUrl()}/og-image.png`} />
         <meta name="twitter:card" content="summary_large_image" />
-        <link rel="canonical" href="https://uptora-electronics.vercel.app" />
+        <link rel="canonical" href={getCanonicalUrl()} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Uptora Electronics",
+          "url": getCanonicalUrl(),
+          "logo": `${getCanonicalUrl()}/logo.png`,
+          "description": "Nigeria's trusted electronics store offering TVs, ACs, Solar panels, Inverters, Phones, Laptops and more with fast delivery and secure payments.",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "uptoraelectronics@gmail.com",
+            "contactType": "customer service",
+            "areaServed": "NG",
+            "availableLanguage": "English"
+          }
+        })}</script>
       </Head>
       <div className="bg-gray-50 text-gray-950 z-[50]">
       {/* Hero Section */}

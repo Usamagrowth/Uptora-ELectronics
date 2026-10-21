@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { signIn } from "next-auth/react";
 import EmailAuthForm from "./EmailAuthForm";
@@ -8,6 +8,11 @@ import { FcGoogle } from "react-icons/fc";
 export default function AuthModal({ isOpen, onClose, defaultMode = "login" }) {
   const [mode, setMode] = useState(defaultMode); // login, register, forgot
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -67,7 +72,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = "login" }) {
                   disabled={loading}
                   className="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-700 rounded-lg py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-50"
                 >
-                  <FcGoogle w-7 h-7 />
+                  <FcGoogle className="w-7 h-7" />
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Continue with Google
                   </span>

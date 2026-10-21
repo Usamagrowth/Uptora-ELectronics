@@ -16,9 +16,9 @@ function AppShell({ Component, pageProps }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const router = useRouter();
 
-  // Register service worker for PWA
+  // Register service worker for PWA (client-side only)
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
           console.log('Service Worker registered with scope:', registration.scope);
@@ -30,10 +30,11 @@ function AppShell({ Component, pageProps }) {
   }, []);
 
   // Hide footer on dashboard, checkout, and auth pages
-  const hideFooter = router.pathname === '/dashboard' || 
+  const hideFooter = router.pathname === '/dashboard' ||
                      router.pathname === '/checkout' ||
                      router.pathname === '/admin' ||
-                     router.pathname.startsWith('/auth');
+                     router.pathname.startsWith('/auth') ||
+                     router.pathname === '/404';
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f7f8f5] text-gray-950 dark:bg-gray-950 dark:text-gray-50">

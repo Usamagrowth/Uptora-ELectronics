@@ -4,7 +4,7 @@ import { getDb } from "../../../lib/mongodb";
 import { updateUserPassword } from "../../../lib/db/users";
 
 export default async function handler(req, res) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session?.user?.email) {
     return res.status(401).json({ error: "Unauthorized" });

@@ -13,12 +13,16 @@ import {
   Plus,
   Edit,
   Trash2,
+  Image as ImageIcon,
 } from "lucide-react";
 import ProductForm from "../components/admin/ProductForm";
 import ProductList from "../components/admin/ProductList";
 import CategoryForm from "../components/admin/CategoryForm";
+import HeroBannerManager from "../components/admin/HeroBannerManager";
+import DeliveryOTPManager from "../components/admin/DeliveryOTPManager";
 import AuthModal from "../components/auth/AuthModal";
 import { FaNairaSign } from "react-icons/fa6";
+import { getCanonicalUrl } from "../lib/site";
 
 function formatNaira(amount) {
   return `₦${amount.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -56,6 +60,7 @@ function AdminPage() {
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [selectedOrderForOTP, setSelectedOrderForOTP] = useState(null);
 
   useEffect(() => {
     if (status === "loading" || !session) return;
@@ -328,13 +333,16 @@ function AdminPage() {
     { key: "orders", label: "Orders", icon: ShoppingCart },
     { key: "products", label: "Products", icon: Box },
     { key: "categories", label: "Categories", icon: Package },
+    { key: "hero-banner", label: "Hero Banner", icon: ImageIcon },
   ];
 
   return (
     <>
       <Head>
         <title>Admin — Uptora Electronics</title>
+        <meta name="description" content="Admin dashboard for Uptora Electronics. Manage products, orders, and categories." />
         <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href={getCanonicalUrl("/admin")} />
       </Head>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -593,6 +601,10 @@ function AdminPage() {
                 </table>
               </div>
             )}
+          </section>
+        ) : activeTab === "hero-banner" ? (
+          <section className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
+            <HeroBannerManager />
           </section>
         ) : null}
 

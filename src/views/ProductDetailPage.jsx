@@ -5,6 +5,7 @@ import Head from "next/head";
 import { useProductsContext } from "../context/ProductsContext";
 import ProductCard from "../components/ProductCard";
 import { BadgeCheck, Truck, LockKeyhole, ShieldCheck, Headphones, Package } from "lucide-react";
+import { getCanonicalUrl } from "../lib/site";
 
 function ProductDetailPage() {
   const router = useRouter();
@@ -200,10 +201,12 @@ function ProductDetailPage() {
         <title>{product.name} — Uptora Electronics</title>
         <meta name="description" content={product.description?.slice(0, 155)} />
         <meta property="og:title" content={`${product.name} — Uptora Electronics`} />
+        <meta property="og:description" content={product.description?.slice(0, 155)} />
+        <meta property="og:url" content={getCanonicalUrl(`/product/${product.id}`)} />
         <meta property="og:image" content={product.image} />
         <meta property="og:type" content="product" />
         <link rel="canonical"
-   href={`https://uptora-electronics.vercel.app/product/${product.id}`}
+   href={getCanonicalUrl(`/product/${product.id}`)}
 />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
