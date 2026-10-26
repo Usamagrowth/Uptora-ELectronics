@@ -1,17 +1,25 @@
 import { getCanonicalUrl } from "../lib/site";
 
 export async function getServerSideProps({ res }) {
-  const base = getCanonicalUrl() || "https://uptoraelectronics.com";
+  // Use Vercel URL environment variable or your canonical domain
+  const base = process.env.NEXT_PUBLIC_SITE_URL || getCanonicalUrl() || "https://uptoraelectronics.com";
   const staticPages = ["/", "/about"];
   let productUrls = [];
 
   try {
-    // Fetch products safely
-    const productRes = await fetch(`${base}/api/products?limit=500`);
+    // Fetch directly from your production domain using an absolute URL
+    const productRes = await fetch(`${base}/api/products?limit=500`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; SitemapGenerator/1.0)",
+      },
+    });
+
     if (productRes.ok) {
       const data = await productRes.json();
-      if (Array.isArray(data.products)) {
-        productUrls = data.products.map((p) => `/product/${p.id}`);
+      // Safely check for products array
+      const products = data.products || data;
+      if (Array.isArray(products)) {
+        productUrls = products.map((p) => `/product/${p.id || p._id}`);
       }
     }
   } catch (err) {
