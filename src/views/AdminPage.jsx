@@ -14,6 +14,7 @@ import {
   Edit,
   Trash2,
   Image as ImageIcon,
+  X,
 } from "lucide-react";
 import ProductForm from "../components/admin/ProductForm";
 import ProductList from "../components/admin/ProductList";
@@ -483,23 +484,34 @@ function AdminPage() {
                           </td>
                           <td className="py-4 px-6 font-mono text-xs text-gray-500 dark:text-gray-400">{order.paymentRef}</td>
                           <td className="py-4 px-6">
-                            {action ? (
-                              <button
-                                type="button"
-                                disabled={updatingId === order.id}
-                                onClick={() => updateOrderStatus(order.id, action.next)}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-brand-600 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
-                              >
-                                {updatingId === order.id ? (
-                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                ) : (
-                                  <action.icon className="w-3.5 h-3.5" />
-                                )}
-                                {action.label}
-                              </button>
-                            ) : (
-                              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">Complete</span>
-                            )}
+                            <div className="flex items-center gap-2">
+                              {action ? (
+                                <button
+                                  type="button"
+                                  disabled={updatingId === order.id}
+                                  onClick={() => updateOrderStatus(order.id, action.next)}
+                                  className="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-brand-600 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                  {updatingId === order.id ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  ) : (
+                                    <action.icon className="w-3.5 h-3.5" />
+                                  )}
+                                  {action.label}
+                                </button>
+                              ) : (
+                                <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">Complete</span>
+                              )}
+                              {order.status === "Shipped" && (
+                                <button
+                                  onClick={() => setSelectedOrderForOTP(order)}
+                                  className="inline-flex items-center gap-1.5 rounded-lg border border-brand-300 text-brand-600 px-3 py-2 text-xs font-semibold hover:bg-brand-50 transition"
+                                >
+                                  <Shield className="w-3.5 h-3.5" />
+                                  OTP
+                                </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
@@ -624,6 +636,42 @@ function AdminPage() {
             onSave={handleSaveCategory}
             onCancel={handleCancelCategoryForm}
           />
+        )}
+
+        {/* Delivery OTP Modal */}
+        {selectedOrderForOTP && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Delivery Verification - Order #{selectedOrderForOTP.id}
+                </h3>
+                <button
+                  onClick={() => setSelectedOrderForOTP(null)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                >
+                  <X className="h-5 w-5 text-gray-500" />
+                </button>
+              </div>
+              <div className="p-4">
+                <DeliveryOTPManager
+                  order={selectedOrderForOTP}
+                  onOTPGenerated={(updatedOrder) => {
+                    setOrders(orders.map(o => o.id === updatedOrder.id ? updatedOrder : o));
+                    setSelectedOrderForOTP(updatedOrder);
+                  }}
+                  onRegenerated={(updatedOrder) => {
+                    setOrders(orders.map(o => o.id === updatedOrder.id ? updatedOrder : o));
+                    setSelectedOrderForOTP(updatedOrder);
+                  }}
+                  onMarkedDelivered={(updatedOrder) => {
+                    setOrders(orders.map(o => o.id === updatedOrder.id ? updatedOrder : o));
+                    setSelectedOrderForOTP(null);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Auth Modal */}
