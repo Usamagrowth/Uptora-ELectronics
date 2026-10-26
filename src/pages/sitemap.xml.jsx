@@ -1,13 +1,11 @@
-import { getCanonicalUrl } from "../lib/site";
-
 export async function getServerSideProps({ res }) {
-  // Use Vercel URL environment variable or your canonical domain
-  const base = process.env.NEXT_PUBLIC_SITE_URL || getCanonicalUrl() || "https://uptoraelectronics.com";
+  // Always enforce your main domain for production sitemaps
+  const base = "https://uptoraelectronics.com";
   const staticPages = ["/", "/about"];
   let productUrls = [];
 
   try {
-    // Fetch directly from your production domain using an absolute URL
+    // Fetch products directly using the absolute domain
     const productRes = await fetch(`${base}/api/products?limit=500`, {
       headers: {
         "User-Agent": "Mozilla/5.0 (compatible; SitemapGenerator/1.0)",
@@ -16,11 +14,12 @@ export async function getServerSideProps({ res }) {
 
     if (productRes.ok) {
       const data = await productRes.json();
-      // Safely check for products array
       const products = data.products || data;
       if (Array.isArray(products)) {
         productUrls = products.map((p) => `/product/${p.id || p._id}`);
       }
+    } else {
+      console.error("Failed to fetch products for sitemap:", productRes.status);
     }
   } catch (err) {
     console.error("Sitemap generation error:", err);
