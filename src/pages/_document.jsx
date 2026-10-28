@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
 
 export default function Document() {
   return (
@@ -9,7 +10,13 @@ export default function Document() {
         <link rel="apple-touch-icon" href="/logo.png" />
         <meta name="theme-color" content="#1b9810" />
         <meta name="description" content="Uptora Electronics — Nigeria's trusted electronics store. Shop TVs, ACs, Solar panels, Inverters, Phones, Laptops and more with fast delivery and secure payments." />
-        
+
+        {/* Google Analytics 4 */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-C9Y1JZ52ML"
+        />
+
         {/* PWA */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -21,6 +28,18 @@ export default function Document() {
       <body className="antialiased">
         <Main />
         <NextScript />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-C9Y1JZ52ML');
+            `,
+          }}
+        />
       </body>
     </Html>
   );
