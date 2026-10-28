@@ -469,7 +469,7 @@ function ProductsPage() {
           </div>
         </div>
       ) : routeSection && sectionBanners[routeSection] ? (
-        <div className="relative h-[220px] sm:h-[320px] md:h-[420px] lg:h-[500px] overflow-hidden">
+        <div className="relative h-full sm:h-[320px] md:h-[420px] lg:h-[500px] overflow-hidden">
           <img 
             src={sectionBanners[routeSection].image} 
             alt="product-image"
@@ -522,7 +522,7 @@ function ProductsPage() {
                     href={cat.href}
                     className="group relative flex-shrink-0 w-[160px] sm:w-[200px] md:w-[220px] rounded-xl overflow-hidden cursor-pointer border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                   >
-                    <div className="h-[130px] sm:h-[160px] w-full overflow-hidden">
+                    <div className="h-fit sm:h-fit w-full overflow-hidden">
                       <img
                         src={cat.image}
                         alt={cat.name}
