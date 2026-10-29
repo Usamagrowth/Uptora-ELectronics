@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { trackAddToCart } from "../lib/analytics";
 
 function ProductCard({ product, onAddToCart }) {
   const router = useRouter();
@@ -24,6 +25,7 @@ function ProductCard({ product, onAddToCart }) {
   function handleBuyNow() {
     if (!product.inStock) return;
     onAddToCart?.(product);
+    trackAddToCart(product, 1);
     router.push("/checkout");
   }
 
@@ -88,13 +90,16 @@ function ProductCard({ product, onAddToCart }) {
           <div className="flex items-center ">
             <button
               type="button"
-              onClick={() => onAddToCart?.(product)}
+              onClick={() => {
+                onAddToCart?.(product);
+                trackAddToCart(product, 1);
+              }}
               disabled={!product.inStock}
               className={`flex min-h-10 w-full items-center justify-center gap-1.5 rounded-md px-4 text-xs font-bold transition-all active:scale-95 sm:text-sm ${
                 product.inStock
                   ? "border border-gray-300 bg-white text-gray-900 hover:border-brand-500 hover:text-brand-600"
                   : "cursor-not-allowed bg-gray-100 text-gray-400"
-              }`} 
+              }`}
             >
              Add to Cart
             </button>

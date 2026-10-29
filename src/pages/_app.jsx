@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
+import Script from "next/script";
 import { useRouter } from "next/router";
 import "../index.css";
 import { SessionProvider } from "next-auth/react";
@@ -10,6 +11,11 @@ import CartSidebar from "../components/CartSidebar";
 import Footer from "../components/Footer";
 import WhatsAppChat from "../components/WhatsAppChat";
 import AIAssistant from "../components/ai/AIAssistant";
+import { trackPageView } from "../lib/analytics";
+
+// Define your IDs
+const GA_MEASUREMENT_ID = "G-JMNCP6621E";
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "";
 
 function AppShell({ Component, pageProps }) {
   const { cart, cartCount, removeFromCart, cartTotal } = useProductsContext();
@@ -28,6 +34,27 @@ function AppShell({ Component, pageProps }) {
         });
     }
   }, []);
+
+  // Track pageviews on SPA route changes for GA4 & Meta Pixel
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      // Track GA4 Pageview
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('config', GA_MEASUREMENT_ID, {
+          page_path: url,
+        });
+      }
+      // Track Meta Pixel PageView
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq('track', 'PageView');
+      }
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
 
   // Hide footer on dashboard, checkout, and auth pages
   const hideFooter = router.pathname === '/dashboard' ||
@@ -62,6 +89,48 @@ function AppShell({ Component, pageProps }) {
 export default function MyApp({ Component, pageProps }) {
   return (
     <>
+      {/* 1. Google Analytics 4 Scripts */}
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+      />
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}', {
+              page_path: window.location.pathname,
+            });
+          `,
+        }}
+      />
+
+      {/* 2. Meta Pixel Script */}
+      {META_PIXEL_ID && (
+        <Script
+          id="meta-pixel"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '${META_PIXEL_ID}');
+              fbq('track', 'PageView');
+            `,
+          }}
+        />
+      )}
+
       <Head>
         <title>Uptora Electronics</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />

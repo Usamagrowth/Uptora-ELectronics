@@ -12,6 +12,7 @@ import usePaystackCheckout, {
 } from "../hooks/usePaystackCheckout";
 import { Lock, ShieldCheck, Loader2, BadgeCheck, Truck, Headphones } from "lucide-react";
 import { getCanonicalUrl } from "../lib/site";
+import { trackPurchase } from "../lib/analytics";
 
 const INITIAL = {
   firstName: "",
@@ -120,6 +121,7 @@ export default function CheckoutPage() {
           clearPendingPaymentRef();
           setVerifiedTotal(payload.order?.totalAmount ?? cartTotal);
           setPaymentSuccess(true);
+          trackPurchase(paymentRef, cart, cartTotal);
           clearCart();
           router.replace("/checkout", undefined, { shallow: true });
         }
@@ -184,6 +186,7 @@ export default function CheckoutPage() {
       const order = await finalizeDemoOrder(result.reference);
       setVerifiedTotal(order.total ?? cartTotal);
       setPaymentSuccess(true);
+      trackPurchase(result.reference, cart, cartTotal);
       clearCart();
       return { skipSuccess: true };
     }

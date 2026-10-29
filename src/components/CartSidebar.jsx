@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ShoppingBag, Trash2, X } from "lucide-react";
+import { trackInitiateCheckout } from "../lib/analytics";
 
 function formatPrice(amount) {
   return `NGN ${amount.toLocaleString("en-NG", {
@@ -94,7 +95,10 @@ function CartSidebar({ cart, onRemove, cartTotal, isOpen, onClose }) {
               </div>
               <Link
                 href="/checkout"
-                onClick={onClose}
+                onClick={() => {
+                  trackInitiateCheckout(cart, cartTotal);
+                  onClose();
+                }}
                 className="block w-full rounded-md bg-brand-500 py-3.5 text-center text-sm font-black text-white transition hover:bg-brand-600 active:scale-95 sm:text-base"
               >
                 Proceed to Checkout

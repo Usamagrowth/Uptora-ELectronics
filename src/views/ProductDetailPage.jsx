@@ -6,6 +6,7 @@ import { useProductsContext } from "../context/ProductsContext";
 import ProductCard from "../components/ProductCard";
 import { BadgeCheck, Truck, LockKeyhole, ShieldCheck, Headphones, Package } from "lucide-react";
 import { getCanonicalUrl } from "../lib/site";
+import { trackViewContent, trackAddToCart } from "../lib/analytics";
 
 function ProductDetailPage() {
   const router = useRouter();
@@ -59,7 +60,10 @@ function ProductDetailPage() {
         }
         
         setProduct(foundProduct);
-        
+
+        // Track view content
+        trackViewContent(foundProduct);
+
         // Add to recent products
         setRecentProducts(prev => {
           const filtered = prev.filter(p => p.id !== foundProduct.id);
@@ -150,6 +154,7 @@ function ProductDetailPage() {
   function handleAddToCart() {
     const productToAdd = selectedOption ? { ...product, selectedOption, price: selectedOption.price } : product;
     for (let i = 0; i < quantity; i++) addToCart(productToAdd);
+    trackAddToCart(productToAdd, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
